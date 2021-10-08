@@ -1,8 +1,10 @@
 #include <iostream>
+#include <cstdio>
 #include <string>
 #include <cstdlib>
 #include <cmath>
 #include <vector>
+#include <array>
 #include <chrono>
 
 void runSortApp();
@@ -12,9 +14,9 @@ void printElements(std::vector<int> &list, std::string when);
 void validateSorting(std::vector<int> &list);
 
 // ## insetion sort related function decalration ##
-void insertionSort();
+void insertionSort(std::vector<int> &list);
 // ## selection sort related function decalration ##
-void selectionSort();
+void selectionSort(std::vector<int> &list);
 // ## merge sort related function decalration ##
 void mergeSort(std::vector<int> &list, uint32_t left, uint32_t right);
 void merge(std::vector<int> &list, uint32_t left, uint32_t middle, uint32_t right);
@@ -42,9 +44,9 @@ void runSortApp()
 
 			auto start = std::chrono::high_resolution_clock::now();
 			if (option == 1)
-				insertionSort();
+				insertionSort(list);
 			else if (option == 2)
-				selectionSort();
+				selectionSort(list);
 			else if (option == 3)
 				mergeSort(list, 0, list.size() - 1);
 			else if (option == 4)
@@ -112,15 +114,38 @@ void validateSorting(std::vector<int> &list)
 }
 
 // insertion sort part
-void insertionSort()
+void insertionSort(std::vector<int> &list)
 {
-	std::cout << "Doing insertion sort" << std::endl;
+	int i = 0;
+	int j = 0;
+	int key = 0;
+	for(i = 1; i < list.size(); i++)
+	{
+		key = list[i];
+		j = i-1;
+		while((j >= 0) && (list[j] > key))
+		{
+			list[j+1] = list[j];
+			j = j-1;
+		}
+		list[j+1] = key;
+	}
 }
 
 // selection sort part
-void selectionSort()
+void selectionSort(std::vector<int> &list)
 {
-	std::cout << "Doing selection sort" << std::endl;
+    int min = 0; //minimum value in the list
+	for(auto i=0; i<list.size(); i++)
+    {
+        min = i;
+        for(auto j=i+1; j<list.size();j++)
+        {
+            if(list[j]<list[min])
+            min = j;
+        }
+        std::swap(list[i],list[min]);
+    }
 }
 
 // merge sort part
@@ -176,11 +201,6 @@ void merge(std::vector<int> &list, uint32_t left, uint32_t middle, uint32_t righ
 		list[left + k] = temp[k];
 		k++;
 	}
-	for (uint32_t i = left; i <= right; ++i)
-	{
-		std::cout << list[i] << " ";
-	}
-	std::cout << std::endl;
 }
 
 // quick sort part
@@ -188,3 +208,4 @@ void quickSort()
 {
 	std::cout << "Doing quick sort" << std::endl;
 }
+
