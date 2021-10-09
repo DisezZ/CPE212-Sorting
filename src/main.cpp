@@ -7,6 +7,7 @@
 #include <array>
 #include <chrono>
 
+// ## normal function
 void runSortApp();
 void printMainMenu();
 void getElements(std::vector<int> &list);
@@ -21,7 +22,9 @@ void selectionSort(std::vector<int> &list);
 void mergeSort(std::vector<int> &list, uint32_t left, uint32_t right);
 void merge(std::vector<int> &list, uint32_t left, uint32_t middle, uint32_t right);
 // ## quick sort related function decalration ##
-void quickSort();
+void quickSort(std::vector<int> &list, int low, int high);
+int hoarePartition(std::vector<int> &list, int low, int high);
+void swap(std::vector<int> &list, int swapOne, int swapTwo);
 
 int main()
 {
@@ -50,7 +53,7 @@ void runSortApp()
 			else if (option == 3)
 				mergeSort(list, 0, list.size() - 1);
 			else if (option == 4)
-				quickSort();
+				quickSort(list, 0, list.size() - 1);
 			auto stop = std::chrono::high_resolution_clock::now();
 			
 			printElements(list, "after");
@@ -100,7 +103,7 @@ void printElements(std::vector<int> &list, std::string when)
 void validateSorting(std::vector<int> &list)
 {
 	bool status = true;
-	for (auto i = 1; i < list.size(); ++i)
+	for (size_t i = 1; i < list.size(); ++i)
 	{
 		if (list[i] < list[i - 1])
 		{
@@ -116,7 +119,7 @@ void validateSorting(std::vector<int> &list)
 // insertion sort part
 void insertionSort(std::vector<int> &list)
 {
-	int i = 0;
+	size_t i = 0;
 	int j = 0;
 	int key = 0;
 	for(i = 1; i < list.size(); i++)
@@ -136,10 +139,10 @@ void insertionSort(std::vector<int> &list)
 void selectionSort(std::vector<int> &list)
 {
     int min = 0; //minimum value in the list
-	for(auto i=0; i<list.size(); i++)
+	for(size_t i=0; i<list.size(); i++)
     {
         min = i;
-        for(auto j=i+1; j<list.size();j++)
+        for(size_t j=i+1; j<list.size();j++)
         {
             if(list[j]<list[min])
             min = j;
@@ -204,8 +207,51 @@ void merge(std::vector<int> &list, uint32_t left, uint32_t middle, uint32_t righ
 }
 
 // quick sort part
-void quickSort()
+void quickSort(std::vector<int> &list, int low, int high)
 {
-	std::cout << "Doing quick sort" << std::endl;
+	int pIndex = 0;
+
+    if(low < high)  
+    {
+        pIndex = hoarePartition(list,low,high);
+        quickSort(list,low,pIndex-1);
+        quickSort(list,pIndex+1,high);
+    }   
 }
 
+int hoarePartition(std::vector<int> &list, int low, int high)
+{
+    int pivot = 0;
+
+    int firstIndex = low;
+    int secondIndex = high+1;
+
+    pivot = list[low];
+
+    do
+    {
+        do
+        {
+            firstIndex++;
+        } while((list[firstIndex] < pivot) && (firstIndex < high));
+        do
+        {
+            secondIndex--;
+        } while((list[secondIndex] > pivot) && (secondIndex > low));
+        swap(list,firstIndex,secondIndex);
+
+    } while(firstIndex < secondIndex);
+
+    swap(list,firstIndex,secondIndex);
+    swap(list,low,secondIndex);
+
+    return secondIndex;
+}
+
+void swap(std::vector<int> &list, int swapOne, int swapTwo)
+{
+    int temp = 0;
+    temp = list[swapOne];   
+    list[swapOne] = list[swapTwo]; 
+    list[swapTwo] = temp;
+}
